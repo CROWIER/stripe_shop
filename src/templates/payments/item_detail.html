@@ -1,0 +1,74 @@
+{% extends 'payments/base.html' %}
+
+{% block title %}{{ item.name }} - Shop{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="item-info">
+        <h1>{{ item.name }}</h1>
+        <p>{{ item.description }}</p>
+        <div class="price">${{ item.price }}</div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing payment...</p>
+        </div>
+
+        <button id="buy-button" class="btn">🛒 Buy Now</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');
+    var buyButton = document.getElementById('buy-button');
+    var loading = document.getElementById('loading');
+
+    buyButton.addEventListener('click', function() {
+        // Показываем загрузку
+        buyButton.style.display = 'none';
+        loading.style.display = 'block';
+
+        fetch('/buy/{{ item.id }}/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.session_id) {
+                return stripe.redirectToCheckout({
+                    sessionId: data.session_id
+                });
+            } else {
+                throw new Error(data.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error: ' + error.message);
+
+            loading.style.display = 'none';
+            buyButton.style.display = 'inline-block';
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

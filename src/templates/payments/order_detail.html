@@ -1,0 +1,105 @@
+{% extends 'payments/base.html' %}
+
+{% block title %}Order #{{ order.id }} - Shop{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>🛍️ Order #{{ order.id }}</h1>
+
+    <div class="meta-info">
+        <strong>Created:</strong> {{ order.created_at|date:"F d, Y H:i" }}
+        {% if order.stripe_session_id %}
+        <br><strong>Stripe Session:</strong> {{ order.stripe_session_id }}
+        {% endif %}
+    </div>
+
+    <h2>📦 Items in Order</h2>
+    {% for order_item in order_items %}
+    <div class="order-item">
+        <h3>{{ order_item.item.name }}</h3>
+        <p>{{ order_item.item.description }}</p>
+        <p><strong>Price:</strong> ${{ order_item.item.price }} × {{ order_item.quantity }}</p>
+        <p><strong>Subtotal:</strong> ${{ order_item.get_total_price }}</p>
+    </div>
+    {% endfor %}
+
+    {% if order.discount %}
+    <div class="discount">
+        <strong>💸 Discount Applied:</strong> {{ order.discount.name }} ({{ order.discount.percent }}% off)
+    </div>
+    {% endif %}
+
+    {% if order.tax %}
+    <div class="tax">
+        <strong>📋 Tax Applied:</strong> {{ order.tax.name }} ({{ order.tax.percent }}%)
+    </div>
+    {% endif %}
+
+    <div class="total">
+        💰 Total: ${{ order.get_total_price }}
+    </div>
+
+    <div style="text-align: center;">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing payment...</p>
+        </div>
+
+        <button id="buy-order-button" class="btn">🛒 Buy Order</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');
+    var buyButton = document.getElementById('buy-order-button');
+    var loading = document.getElementById('loading');
+
+    buyButton.addEventListener('click', function() {
+        // Показываем загрузку
+        buyButton.style.display = 'none';
+        loading.style.display = 'block';
+
+        fetch('/buy-order/{{ order.id }}/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.session_id) {
+                return stripe.redirectToCheckout({
+                    sessionId: data.session_id
+                });
+            } else {
+                throw new Error(data.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error: ' + error.message);
+
+            loading.style.display = 'none';
+            buyButton.style.display = 'inline-block';
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

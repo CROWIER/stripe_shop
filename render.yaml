@@ -3,6 +3,7 @@ services:
     name: django-stripe-shop
     env: docker
     dockerfilePath: ./Dockerfile
+    plan: free
     envVars:
       - key: SECRET_KEY
         generateValue: true
@@ -35,3 +36,4 @@ databases:
   - name: postgres-db
     databaseName: shop
     user: shop_user
+    plan: free

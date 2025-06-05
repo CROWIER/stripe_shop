@@ -26,8 +26,12 @@ services:
         fromDatabase:
           name: postgres-db
           property: port
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        value: "pk_test_51RWMw6IpcH9lBRyH0xXZZqvwRs6x3iAn1VmV283yHGuRQpGWJdtApriq1K4vszoalUeTzKGDkLasqn16kTX3Xet200An30QIc7"
 
 databases:
   - name: postgres-db
-    databaseName: shop_db
-    user: postgres
+    databaseName: shop
+    user: shop_user

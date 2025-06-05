@@ -9,7 +9,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: DB_NAME
-        value: "shop_db"
+        value: "shop"
       - key: DB_USER
         fromDatabase:
           name: postgres-db

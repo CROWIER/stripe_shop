@@ -2,7 +2,7 @@
 bashgit clone https://github.com/CROWIER/stripe_shop.git
 2. Настройка переменных окружения
 Создайте файл .env в корне проекта по образу env.example:
-3. Собарть docker-compose up --build
+   3. Собарть docker-compose up -d
 4. docker-compose up
 5. Приложение: http://localhost:8000
 Админ панель: http://localhost:8000/admin/

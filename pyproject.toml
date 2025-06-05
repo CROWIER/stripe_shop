@@ -12,8 +12,7 @@ dependencies = [
     "stripe (>=12.2.0,<13.0.0)",
     "python-decouple (>=3.8,<4.0)",
     "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "dj-database-url (>=3.0.0,<4.0.0)",
-    "whitenoise (>=6.6)"
+    "dj-database-url (>=3.0.0,<4.0.0)"
 ]
 
 

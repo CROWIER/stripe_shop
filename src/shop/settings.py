@@ -1,8 +1,6 @@
 import os
-import dj_database_url
 from pathlib import Path
 from decouple import config
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -118,12 +116,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
 
-# Render deployment
-if 'RENDER' in os.environ:
-    ALLOWED_HOSTS.append('.onrender.com')
-
-    # Database
-    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
-
-    # Static files for production
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+if 'RAILWAY_ENVIRONMENT' in os.environ:
+    ALLOWED_HOSTS.append('.railway.app')

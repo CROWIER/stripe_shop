@@ -8,10 +8,6 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
-      - key: STRIPE_SECRET_KEY
-        value: "sk_test_51RWMw6IpcH9lBRyHFOE2S1OrsTGbvu9tK6dQuxoFYVFoJa4SUCFocCdtRHi5j3mu9ukO84qt4Sj22gw38sq59a3Z00NxIYXTUU"
-      - key: STRIPE_PUBLISHABLE_KEY
-        value: "pk_test_51RWMw6IpcH9lBRyH0xXZZqvwRs6x3iAn1VmV283yHGuRQpGWJdtApriq1K4vszoalUeTzKGDkLasqn16kTX3Xet200An30QIc7"
       - key: DB_NAME
         value: "shop_db"
       - key: DB_USER
